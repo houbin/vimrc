@@ -1,0 +1,10 @@
+# vim配置说明
+该git库用于配置一个自己了解的vim环境，不求最好，但求了解
+
+# 安装 
+1. git clone https://github.com/houbin/vimrc.git
+2. git submodule init
+3. git submodule update
+4. ./setup.sh
+
+
