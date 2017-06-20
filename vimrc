@@ -17,19 +17,19 @@ set backspace=indent,eol,start whichwrap+=<,>,[,] "允许退格键的使用
 
 autocmd BufEnter * lcd %:p:h
 " 缩进
-if has("autocmd") 
-    filetype plugin indent on
-    augroup vimrcEx
-    	au!
-	    autocmd FileType text setlocal textwidth=200
-        autocmd BufReadPost *
-	                    \ if line("'\"") > 1 && line("'\"") <= line("$") |
-	                    \ exe "normal! g`\"" |
-	                    \ endif
-	    augroup END
-else
-    set autoindent
-endif " has("autocmd")
+"if has("autocmd") 
+"    filetype plugin indent on
+"    augroup vimrcEx
+"    	au!
+"	    autocmd FileType text setlocal textwidth=200
+"        autocmd BufReadPost *
+"	                    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+"	                    \ exe "normal! g`\"" |
+"	                    \ endif
+"	    augroup END
+"else
+"		"set autoindent
+"endif " has("autocmd")
 
 map <F12> :call Do_CsTag()<CR>
 nmap <C-@>s :cs find s <C-R>=expand("<cword>")<CR><CR>:copen<CR>
@@ -104,31 +104,126 @@ set completeopt=longest,menuone                  " 更好的insert模式自动�
 
 filetype off                  " required
 
-
-" vundle
-" set rtp+=~/.vim/bundle/vundle
-" call vundle#rc()
-" Bundle 'gmarik/vundle'
-" 
-" Plugin 'scrooloose/nerdtree'
-
-
-" 所有插件必须在该行之前
-" call vundle#end() " require 
-" filetype plugin indent on " 必须 加载vim自带和插件相应的语法和文件类型相关脚本
-
-" To ignore plugin indent changes, instead use:
-" filetype plugin on
+" ========================== neocomplete start ============================
 "
-" Brief help
-" :PluginList          - list configured plugins
-" :PluginInstall(!)    - install (update) plugins
-" :PluginSearch(!) foo - search (or refresh cache first) for foo
-" :PluginClean(!)      - confirm (or auto-approve) removal of unused plugins
-"
-" see :h vundle for more details or wiki for FAQ
-" NOTE: comments after Plugin commands are not allowed.
-" Put your stuff after this line
+"Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
+" Disable AutoComplPop.
+let g:acp_enableAtStartup = 0
+" Use neocomplete.
+let g:neocomplete#enable_at_startup = 1
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplete#sources#syntax#min_keyword_length = 3
+
+" Define dictionary.
+let g:neocomplete#sources#dictionary#dictionaries = {
+    \ 'default' : '',
+    \ 'vimshell' : $HOME.'/.vimshell_hist',
+    \ 'scheme' : $HOME.'/.gosh_completions'
+        \ }
+
+" Define keyword.
+if !exists('g:neocomplete#keyword_patterns')
+    let g:neocomplete#keyword_patterns = {}
+endif
+let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+" Plugin key-mappings.
+inoremap <expr><C-g>     neocomplete#undo_completion()
+inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+  " For no inserting <CR> key.
+  "return pumvisible() ? "\<C-y>" : "\<CR>"
+endfunction
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+" Close popup by <Space>.
+"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
+
+" AutoComplPop like behavior.
+"let g:neocomplete#enable_auto_select = 1
+
+" Shell like behavior(not recommended).
+"set completeopt+=longest
+"let g:neocomplete#enable_auto_select = 1
+"let g:neocomplete#disable_auto_complete = 1
+"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+" Enable heavy omni completion.
+if !exists('g:neocomplete#sources#omni#input_patterns')
+  let g:neocomplete#sources#omni#input_patterns = {}
+endif
+"let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+" For perlomni.vim setting.
+" https://github.com/c9s/perlomni.vim
+let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+" ====================== neocomplete end =================================
+
+
+" set the runtime path to include Vundle and initialize
+  set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#rc()
+  " alternatively, pass a path where Vundle should install plugins
+  "let path = '~/some/path/here'
+  "call vundle#rc(path)
+
+  " let Vundle manage Vundle, required
+  Plugin 'VundleVim/Vundle.vim'
+
+  " The following are examples of different formats supported.
+  " Keep Plugin commands between here and filetype plugin indent on.
+  " scripts on GitHub repos
+  Plugin 'Valloric/YouCompleteMe'
+  Plugin 'Shougo/neocomplete.vim'
+
+
+  " Plugin 'tpope/vim-fugitive'
+  "Plugin 'Lokaltog/vim-easymotion'
+  "Plugin 'tpope/vim-rails.git'
+  " The sparkup vim script is in a subdirectory of this repo called vim.
+  " Pass the path to set the runtimepath properly.
+  "Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+  " scripts from http://vim-scripts.org/vim/scripts.html
+  "Plugin 'L9'
+  "Plugin 'FuzzyFinder'
+  " scripts not on GitHub
+  "Plugin 'git://git.wincent.com/command-t.git'
+  " git repos on your local machine (i.e. when working on your own plugin)
+  "Plugin 'file:///home/gmarik/path/to/plugin'
+  " ...
+
+  filetype plugin indent on     " required
+  " To ignore plugin indent changes, instead use:
+  "filetype plugin on
+  "
+  " Brief help
+  " :PluginList          - list configured plugins
+  " :PluginInstall(!)    - install (update) plugins
+  " :PluginSearch(!) foo - search (or refresh cache first) for foo
+  " :PluginClean(!)      - confirm (or auto-approve) removal of unused plugins
+  "
+  " see :h vundle for more details or wiki for FAQ
+  " NOTE: comments after Plugin commands are not allowed.
+  " Put your stuff after this line
 
 
 
