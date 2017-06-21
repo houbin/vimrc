@@ -4,3 +4,6 @@
 [submodule "vim/bundle/neocomplete.vim"]
 	path = vim/bundle/neocomplete.vim
 	url = https://github.com/Shougo/neocomplete.vim.git
+[submodule "vim/bundle/nerdtree"]
+	path = vim/bundle/nerdtree
+	url = https://github.com/scrooloose/nerdtree

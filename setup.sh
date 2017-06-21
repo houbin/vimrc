@@ -4,12 +4,12 @@ VIM_DIR=$(dirname `readlink -f $0`)
 
 green_print()
 {
-    printf '\e[1;32m%s\e[0m\n' "$1"
+    printf '\e[1;32m%b\e[0m\n' "$1"
 }
 
 red_print()
 {
-    printf '\e[1;31m%s\e[0m\n' "$1"
+    printf '\e[1;31m%b\e[0m\n' "$1"
 }
 
 die()
@@ -37,13 +37,6 @@ check_wlan()
 	return 1
 }
 
-compile_vim_with_lua()
-{
-    wget 
-        
-
-}
-
 check_require()
 {
 	info "Checking requirements for vimrc ......"
@@ -59,16 +52,16 @@ check_require()
         die "You vim version is less than 7.4. Please update your vim"
     fi
 
-    vim --version | grep "+lua" || die "Vim without lua, need +lua \
-yum install lua lua-devel \n\
-wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz \n\
-tar -xzf LuaJIT-2.0.4.tar.gz \n\
-cd LuaJIT-2.0.4 \n\
-make && make install \n\
-wget https://github.com/vim/vim/archive/v7.4.tar.gz \n\
-tar -xzf v7.4.tar.gz \n\
-./configure --prefix=/usr --with-features=huge --with-luajit --enable-luainterp=yes --enable-fail-if-missing \n\
-make && make install"
+    vim --version | grep "\+lua" || die "Vim without lua, need +lua, and you can recompile vim as below \n\
+-- yum install lua lua-devel \n\
+-- wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz \n\
+-- tar -xzf LuaJIT-2.0.4.tar.gz \n\
+-- cd LuaJIT-2.0.4 \n\
+-- make && make install \n\
+-- wget https://github.com/vim/vim/archive/v7.4.tar.gz \n\
+-- tar -xzf v7.4.tar.gz \n\
+-- ./configure --prefix=/usr --with-features=huge --with-luajit --enable-luainterp=yes --enable-fail-if-missing \n\
+-- make && make install"
 
 	info "Check requirements for vimrc ok"
 }
@@ -107,7 +100,8 @@ backup_vimrc()
 
 help()
 {
-	info "Usage: $0 -h/-i/-u"
+	info "Usage: $0 [options]"
+    info "Option:"
 	info "-h: help"
 	info "-i: install vimrc"
 	info "-u: update submodule"
