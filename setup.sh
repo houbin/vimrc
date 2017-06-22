@@ -89,6 +89,9 @@ install_vimrc()
     cp -f ${VIM_DIR}/vimrc $HOME/.vimrc
     cp -rf ${VIM_DIR}/vim $HOME/.vim
 
+    # 修改git默认编辑器为vim
+    which git && git config --global core.editor vim
+
     info "Install vimrc ok"
 }
 

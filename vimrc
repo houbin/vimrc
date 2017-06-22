@@ -1,12 +1,28 @@
 " platform
-if (has("win32") || has("win95") || has("win64") || has("win16"))
-    let g:vimrc_iswindows=1
-else
-    let g:vimrc_iswindows=0
-endif
+" if (has("win32") || has("win95") || has("win64") || has("win16"))
+"     let g:vimrc_iswindows=1
+" else
+"     let g:vimrc_iswindows=0
+" endif
 
-set nocompatible
-syntax on
+" vbundle配置 
+set nocompatible 
+
+filetype off                    "required!
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" Let vundle manage itself
+Plugin 'VundleVim/Vundle.vim'
+
+" Plugins
+Plugin 'Shougo/neocomplete.vim'
+Plugin 'scrooloose/nerdtree'
+
+call vundle#end()               " required
+filetype plugin indent on       "required!
+
+syntax enable
 set tabstop=4 " 一个tab等于4个空格
 set shiftwidth=4 " 每层缩进的空格数
 set expandtab " 将tab扩展为空格。使用Ctrl-V<tab>来输入真正的tab
@@ -21,7 +37,6 @@ set autoread                                     " 文件在Vim之外修改过�
 set showbreak=↪                                  " 显示换行符
 set completeopt=longest,menuone                  " 更好的insert模式自动完成
 
-filetype off                  " required
 
 autocmd BufEnter * lcd %:p:h
 
@@ -235,50 +250,3 @@ autocmd BufEnter * lcd %:p:h
     " gt                后一个tab
 
 
-" bundle配置
-    " set the runtime path to include Vundle and initialize
-      set rtp+=~/.vim/bundle/Vundle.vim
-    call vundle#rc()
-      " alternatively, pass a path where Vundle should install plugins
-      "let path = '~/some/path/here'
-      "call vundle#rc(path)
-    
-      " let Vundle manage Vundle, required
-      Plugin 'VundleVim/Vundle.vim'
-    
-      " The following are examples of different formats supported.
-      " Keep Plugin commands between here and filetype plugin indent on.
-      " scripts on GitHub repos
-      Plugin 'Valloric/YouCompleteMe'
-      Plugin 'Shougo/neocomplete.vim'
-      Plugin 'scrooloose/nerdtree'
-    
-    
-      " Plugin 'tpope/vim-fugitive'
-      "Plugin 'Lokaltog/vim-easymotion'
-      "Plugin 'tpope/vim-rails.git'
-      " The sparkup vim script is in a subdirectory of this repo called vim.
-      " Pass the path to set the runtimepath properly.
-      "Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-      " scripts from http://vim-scripts.org/vim/scripts.html
-      "Plugin 'L9'
-      "Plugin 'FuzzyFinder'
-      " scripts not on GitHub
-      "Plugin 'git://git.wincent.com/command-t.git'
-      " git repos on your local machine (i.e. when working on your own plugin)
-      "Plugin 'file:///home/gmarik/path/to/plugin'
-      " ...
-    
-      filetype plugin indent on     " required
-      " To ignore plugin indent changes, instead use:
-      "filetype plugin on
-      "
-      " Brief help
-      " :PluginList          - list configured plugins
-      " :PluginInstall(!)    - install (update) plugins
-      " :PluginSearch(!) foo - search (or refresh cache first) for foo
-      " :PluginClean(!)      - confirm (or auto-approve) removal of unused plugins
-      "
-      " see :h vundle for more details or wiki for FAQ
-      " NOTE: comments after Plugin commands are not allowed.
-      " Put your stuff after this line "
