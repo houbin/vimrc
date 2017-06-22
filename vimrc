@@ -18,6 +18,7 @@ Plugin 'VundleVim/Vundle.vim'
 " Plugins
 Plugin 'Shougo/neocomplete.vim'
 Plugin 'scrooloose/nerdtree'
+Plugin 'majutsushi/tagbar'
 
 call vundle#end()               " required
 filetype plugin indent on       "required!
@@ -210,7 +211,7 @@ autocmd BufEnter * lcd %:p:h
     autocmd StdinReadPre * let s:std_in=1
     autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
-    let NERDTreeWinPos="right" 
+    "let NERDTreeWinPos="right" 
     let NERDTreeShowBookmarks=1
     let NERDTreeIgnore=['\.o','\.pyc', '\~$', '\.swo$', '\.swp$', '\.git', '\.hg', '\.svn', '\.bzr']
     let NERDTreeKeepTreeInNewTab=1
@@ -249,4 +250,8 @@ autocmd BufEnter * lcd %:p:h
     " gT                前一个tab
     " gt                后一个tab
 
+" tagbar配置
+    let g:tagbar_width=26
+    let g:tagbar_autofocus = 1
+    nmap <F4> :TagbarToggle<CR> 
 
