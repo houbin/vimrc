@@ -19,6 +19,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'Shougo/neocomplete.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
+Plugin 'tomasr/molokai'
 
 call vundle#end()               " required
 filetype plugin indent on       "required!
@@ -255,3 +256,5 @@ autocmd BufEnter * lcd %:p:h
     let g:tagbar_autofocus = 1
     nmap <F4> :TagbarToggle<CR> 
 
+" molokai, scheme color
+    let g:molokai_original = 1
