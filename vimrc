@@ -1,9 +1,9 @@
 " platform
-" if (has("win32") || has("win95") || has("win64") || has("win16"))
-"     let g:vimrc_iswindows=1
-" else
-"     let g:vimrc_iswindows=0
-" endif
+if (has("win32") || has("win95") || has("win64") || has("win16"))
+    let g:iswindows=1
+else
+    let g:iswindows=0
+endif
 
 " vbundle配置 
 set nocompatible 
@@ -20,15 +20,14 @@ Plugin 'Shougo/neocomplete.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
 Plugin 'tomasr/molokai'
-Plugin 'universal-ctags/ctags'
 
 call vundle#end()               " required
 
-filetype plugin indent on       "required!
+filetype plugin indent off       "required!
 
 syntax enable 
-nmap LB ^
-nmap LE $
+nmap lb ^
+nmap le $
 set tabstop=4                                    " 一个tab等于4个空格
 set shiftwidth=4                                 " 每层缩进的空格数
 set expandtab                                    " 将tab扩展为空格。使用Ctrl-V<tab>来输入真正的tab
@@ -51,6 +50,13 @@ let mapleader=";"
 " 设置快捷键将选中文本复制到系统的剪贴板和将剪贴板的内容粘贴至vim
 vnoremap <Leader>y "+y
 vnoremap <Leader>p "+p
+
+"Window navigation mappings
+"deprecated after using vim-tmux-navigator
+    noremap <C-h> <C-w>h
+    noremap <C-j> <C-w>j
+    noremap <C-k> <C-w>k
+    noremap <C-l> <C-w>l
 
 " 缩进
 "if has("autocmd") 
@@ -145,22 +151,10 @@ vnoremap <Leader>p "+p
 " NERDTree配置
     map <F3> :NERDTreeToggle<CR>
 
-    " open a NERDTree automatically when vim set up
-    " autocmd VimEnter * NERDTree
-
-    " open NERDTree automatically when vim starts up on opening a directory 
-    autocmd StdinReadPre * let s:std_in=1
-    autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-
-    " open NERDTree when automatically when vim starts up if no files were specified 
-    autocmd StdinReadPre * let s:std_in=1
-    autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-
     let NERDTreeShowBookmarks=1
     let NERDTreeIgnore=['\.o','\.pyc', '\~$', '\.swo$', '\.swp$', '\.git', '\.hg', '\.svn', '\.bzr']
     let NERDTreeKeepTreeInNewTab=1
     let NERDTreeShowHidden=1
-
 
     " close vim if the only window left open is NERDTree
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -209,17 +203,29 @@ vnoremap <Leader>p "+p
 " molokai, scheme color
     let g:molokai_original = 1
 
-" cscope setting
+"cscope setting
+    let work_dir=getcwd()
     function! AddScope()
+        " set csprg=/usr/local/bin/cscope
+        " set cscopetagorder=1
+        " set cscopetag
         set nocsverb
+        " add any database in current directory
         if filereadable("cscope.out")
-            cs add cscope.out
-        endif
+            cs add cscope.out work_dir -C
+        "else search cscope.out elsewhere  
+        else  
+           let cscope_file=findfile("cscope.out", ".;")  
+           let cscope_pre=matchstr(cscope_file, ".*/")  
+           if !empty(cscope_file) && filereadable(cscope_file)  
+               cs add cscope_file cscope_pre
+           endif        
+         endif 
         set csverb
     endfunction
 
     function! GenerateScope()
-        !find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.cpp" -o -name "*.hpp" -o -name "*.java" -o -name "*.php" -o -name "*.go"> cscope.files;cscope -bkq -i cscope.files
+        !find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.cpp" -o -name "*.hpp" -o -name "*.java" -o -name "*.php" -o -name "*.go"> cscope.files;cscope -Rbkq
         call AddScope()
     endfunction
 
@@ -227,15 +233,24 @@ vnoremap <Leader>p "+p
         call AddScope()
     endif
 
-    nmap <C-_>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-_>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-_>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-_>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-_>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-_>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <C-_>i :cs find i <C-R>=expand("<cfile>")<CR><CR>
-    nmap <C-_>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-  
+    " The following maps all invoke one of the following cscope search types:
+    "   's'   symbol: find all references to the token under cursor
+    "   'g'   global: find global definition(s) of the token under cursor
+    "   'c'   calls:  find all calls to the function name under cursor
+    "   't'   text:   find all instances of the text under cursor
+    "   'e'   egrep:  egrep search for the word under cursor
+    "   'f'   file:   open the filename under cursor
+    "   'i'   includes: find files that include the filename under cursor
+    "   'd'   called: find functions that function under cursor calls
+    nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+    nmap <C-\>i :cs find i <C-R>=expand("<cfile>")<CR><CR>
+    nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+
 " 自定义命令
 command! Ctags !ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .
 command! Cscope call GenerateScope()
