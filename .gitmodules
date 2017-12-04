@@ -13,3 +13,6 @@
 [submodule "vim/bundle/molokai"]
 	path = vim/bundle/molokai
 	url = https://github.com/tomasr/molokai.git
+[submodule "vim/bundle/ctags"]
+	path = vim/bundle/ctags
+	url = https://github.com/universal-ctags/ctags

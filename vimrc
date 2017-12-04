@@ -20,17 +20,21 @@ Plugin 'Shougo/neocomplete.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
 Plugin 'tomasr/molokai'
+Plugin 'universal-ctags/ctags'
 
 call vundle#end()               " required
+
 filetype plugin indent on       "required!
 
-syntax enable
-set tabstop=4 " 一个tab等于4个空格
-set shiftwidth=4 " 每层缩进的空格数
-set expandtab " 将tab扩展为空格。使用Ctrl-V<tab>来输入真正的tab
-set nowrap " 不自动换行
-set hlsearch " 高亮搜索内容
-set incsearch " 在输入要搜索的文字时, vim会自动匹配
+syntax enable 
+nmap LB ^
+nmap LE $
+set tabstop=4                                    " 一个tab等于4个空格
+set shiftwidth=4                                 " 每层缩进的空格数
+set expandtab                                    " 将tab扩展为空格。使用Ctrl-V<tab>来输入真正的tab
+set nowrap                                       " 不自动换行
+set hlsearch                                     " 高亮搜索内容
+set incsearch                                    " 在输入要搜索的文字时, vim会自动匹配
 set backspace=indent,eol,start whichwrap+=<,>,[,] "允许退格键的使用
 
 set history=1024
@@ -39,8 +43,20 @@ set autoread                                     " 文件在Vim之外修改过�
 set showbreak=↪                                  " 显示换行符
 set completeopt=longest,menuone                  " 更好的insert模式自动完成
 
-
 autocmd BufEnter * lcd %:p:h
+
+" mapleader
+let mapleader=";"
+
+" 设置快捷键将选中文本复制到系统的剪贴板和将剪贴板的内容粘贴至vim
+vnoremap <Leader>y "+y
+vnoremap <Leader>p "+p
+
+" 依次遍历子窗口
+nnoremap nw <C-W><C-W>
+nnoremap <Leader>lw <C-W>l
+nnoremap <Leader>hw <C-W>h
+  
 
 " 缩进
 "if has("autocmd") 
@@ -56,6 +72,7 @@ autocmd BufEnter * lcd %:p:h
 "else
 "		"set autoindent
 "endif " has("autocmd")
+
 
 " ctag配置
     map <F12> :call Do_CsTag()<CR>
@@ -212,10 +229,11 @@ autocmd BufEnter * lcd %:p:h
     autocmd StdinReadPre * let s:std_in=1
     autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
-    "let NERDTreeWinPos="right" 
     let NERDTreeShowBookmarks=1
     let NERDTreeIgnore=['\.o','\.pyc', '\~$', '\.swo$', '\.swp$', '\.git', '\.hg', '\.svn', '\.bzr']
     let NERDTreeKeepTreeInNewTab=1
+    let NERDTreeShowHidden=1
+
 
     " close vim if the only window left open is NERDTree
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -255,6 +273,40 @@ autocmd BufEnter * lcd %:p:h
     let g:tagbar_width=26
     let g:tagbar_autofocus = 1
     nmap <F4> :TagbarToggle<CR> 
+    
+    " 快捷键
+    " F1                跳到tagbar对应的快捷键说明
+    " p                 tag window跳到对应的地方, 但是光标不移动
 
 " molokai, scheme color
     let g:molokai_original = 1
+" cscope setting
+    function! AddScope()
+        set nocsverb
+        if filereadable("cscope.out")
+            cs add cscope.out
+        endif
+        set csverb
+    endfunction
+
+    function! GenerateScope()
+        !find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.cpp" -o -name "*.hpp" -o -name "*.java" -o -name "*.php" -o -name "*.go"> cscope.files;cscope -bkq -i cscope.files
+        call AddScope()
+    endfunction
+
+    if has("cscope")
+        call AddScope()
+    endif
+
+    nmap <C-_>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-_>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-_>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-_>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-_>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-_>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+    nmap <C-_>i :cs find i <C-R>=expand("<cfile>")<CR><CR>
+    nmap <C-_>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+  
+" 自定义命令
+command! Ctags !ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .
+command! Cscope call GenerateScope()
