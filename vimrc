@@ -212,6 +212,7 @@ vnoremap <Leader>p "+p
         set nocsverb
         " add any database in current directory
         if filereadable("cscope.out")
+            "cs add cscope.out
             cs add cscope.out work_dir -C
         "else search cscope.out elsewhere  
         else  
